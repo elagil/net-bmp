@@ -1,0 +1,6 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+"H1, H2",MountingHole_3.2mm_M3_ISO7380_Pad,2,MountingHole,
+J1,IDC-Header_2x03_P2.54mm_Vertical,1,TC2030,
+J2,PinHeader_1x03_P2.54mm_Vertical,1,UART,
+J3,PinSocket_2x05_P1.27mm_Vertical_SMD,1,BMDU,
+oshw1,OSHW-Symbol_6.7x6mm_SilkScreen,1,Logo_Open_Hardware_Large,

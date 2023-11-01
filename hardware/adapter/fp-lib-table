@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Connector_Debug")(type "KiCad")(uri "${KIPRJMOD}/../kicad-library/footprints/connector_debug.pretty")(options "")(descr ""))
+)
