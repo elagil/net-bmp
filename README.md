@@ -1,2 +1,3 @@
 # net bmp
-An Ethernet-connect SWD/JTAG debug adapter (blackmagic probe)
+
+An Ethernet-connected SWD/JTAG debug adapter, based on the [blackmagic probe](https://black-magic.org).
