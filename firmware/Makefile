@@ -112,7 +112,8 @@ include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Stream support.
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
-include $(CHIBIOS)/os/various/shell/shell.mk
+# lwip support.
+include lwip.mk
 
 # Define linker script file here.
 LDSCRIPT= ./STM32F407xE.ld
