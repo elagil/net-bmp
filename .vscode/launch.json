@@ -23,8 +23,8 @@
         {
             "name": "Cortex Debug - Launch",
             "cwd": "${workspaceFolder}/firmware",
-            "executable": "./build/mala.elf",
-            "svdFile": "./STM32F401.svd",
+            "executable": "./build/net-bmp.elf",
+            "svdFile": "./STM32F407.svd",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",
@@ -39,8 +39,8 @@
         {
             "name": "Cortex Debug - Attach",
             "cwd": "${workspaceFolder}/firmware",
-            "executable": "./build/mala.elf",
-            "svdFile": "./STM32F401.svd",
+            "executable": "./build/net-bmp.elf",
+            "svdFile": "./STM32F407.svd",
             "request": "attach",
             "type": "cortex-debug",
             "runToEntryPoint": "main",

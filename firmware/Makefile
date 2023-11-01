@@ -96,6 +96,10 @@ BUILDDIR := ./build
 DEPDIR   := ./.dep
 BOARDDIR := ./board
 
+# Libraries.
+LWIPDIR  := lwip/src
+BMDIR    := blackmagic
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
@@ -113,7 +117,10 @@ include $(CHIBIOS)/tools/mk/autobuild.mk
 # Stream support.
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 # lwip support.
-include lwip.mk
+include make/lwip.mk
+# blackmagic library.
+include make/blackmagic.mk
+
 
 # Define linker script file here.
 LDSCRIPT= ./STM32F407xE.ld

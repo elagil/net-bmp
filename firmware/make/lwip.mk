@@ -1,6 +1,4 @@
 # Modeled after $(CHIBIOS)/os/various/lwip_bindings/lwip.mk
-# List of the required lwIP files.
-LWIPDIR = lwip/src
 
 # The various blocks of files are outlined in Filelists.mk.
 include $(LWIPDIR)/Filelists.mk
