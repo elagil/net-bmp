@@ -19,8 +19,8 @@
  * generator plugin. Do not edit manually.
  */
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef BOARD_BOARD_H_
+#define BOARD_BOARD_H_
 
 /*===========================================================================*/
 /* Driver constants.                                                         */
@@ -293,21 +293,21 @@
  * in the initialization code.
  * Please refer to the STM32 Reference Manual for details.
  */
-#define PIN_MODE_INPUT(n)      (0U << ((n) * 2U))
-#define PIN_MODE_OUTPUT(n)     (1U << ((n) * 2U))
-#define PIN_MODE_ALTERNATE(n)  (2U << ((n) * 2U))
-#define PIN_MODE_ANALOG(n)     (3U << ((n) * 2U))
+#define PIN_MODE_INPUT(n)      (0U << ((n)*2U))
+#define PIN_MODE_OUTPUT(n)     (1U << ((n)*2U))
+#define PIN_MODE_ALTERNATE(n)  (2U << ((n)*2U))
+#define PIN_MODE_ANALOG(n)     (3U << ((n)*2U))
 #define PIN_ODR_LOW(n)         (0U << (n))
 #define PIN_ODR_HIGH(n)        (1U << (n))
 #define PIN_OTYPE_PUSHPULL(n)  (0U << (n))
 #define PIN_OTYPE_OPENDRAIN(n) (1U << (n))
-#define PIN_OSPEED_VERYLOW(n)  (0U << ((n) * 2U))
-#define PIN_OSPEED_LOW(n)      (1U << ((n) * 2U))
-#define PIN_OSPEED_MEDIUM(n)   (2U << ((n) * 2U))
-#define PIN_OSPEED_HIGH(n)     (3U << ((n) * 2U))
-#define PIN_PUPDR_FLOATING(n)  (0U << ((n) * 2U))
-#define PIN_PUPDR_PULLUP(n)    (1U << ((n) * 2U))
-#define PIN_PUPDR_PULLDOWN(n)  (2U << ((n) * 2U))
+#define PIN_OSPEED_VERYLOW(n)  (0U << ((n)*2U))
+#define PIN_OSPEED_LOW(n)      (1U << ((n)*2U))
+#define PIN_OSPEED_MEDIUM(n)   (2U << ((n)*2U))
+#define PIN_OSPEED_HIGH(n)     (3U << ((n)*2U))
+#define PIN_PUPDR_FLOATING(n)  (0U << ((n)*2U))
+#define PIN_PUPDR_PULLUP(n)    (1U << ((n)*2U))
+#define PIN_PUPDR_PULLDOWN(n)  (2U << ((n)*2U))
 #define PIN_AFIO_AF(n, v)      ((v) << (((n) % 8U) * 4U))
 
 /*
@@ -891,4 +891,4 @@ void boardInit(void);
 #endif
 #endif /* _FROM_ASM_ */
 
-#endif /* BOARD_H */
+#endif  // BOARD_BOARD_H_
