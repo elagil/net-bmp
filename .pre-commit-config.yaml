@@ -1,0 +1,34 @@
+exclude: "hardware"
+
+repos:
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v16.0.4
+  hooks:
+  - id: clang-format
+    types_or: [c++, c]
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: trailing-whitespace
+  - id: check-case-conflict
+  - id: end-of-file-fixer
+  - id: mixed-line-ending
+
+- repo: https://github.com/cpplint/cpplint
+  rev: "1.6.1"
+  hooks:
+  - id: cpplint
+    args:
+      - --root=firmware
+
+- repo: https://github.com/crate-ci/typos
+  rev: v1.14.11
+  hooks:
+  - id: typos
+    args:
+      [] # Do not auto-fix
+    exclude: |
+      (?x)(
+          STM32F401.svd|
+      )$

@@ -1,0 +1,9 @@
+---
+IndentWidth: 4
+BasedOnStyle: Google
+ColumnLimit: 120
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Right
+---

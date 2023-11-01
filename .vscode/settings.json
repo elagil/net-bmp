@@ -1,0 +1,21 @@
+{
+    "makefile.configurations": [
+        {
+            "name": "Default",
+            "makefilePath": "firmware/Makefile",
+            "makeDirectory": "firmware",
+            "makeArgs": [
+                "-j"
+            ],
+            "problemMatchers": [
+                "$gcc",
+            ]
+        }
+    ],
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+    "files.associations": {
+        "*.inc": "c",
+        "*.h": "c",
+        "*.c": "c",
+    },
+}

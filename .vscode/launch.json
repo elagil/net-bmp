@@ -1,0 +1,51 @@
+{
+    "configurations": [
+        {
+            "name": "ceedling",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/firmware/build/test/out/${command:ceedlingExplorer.debugTestExecutable}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/firmware",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Cortex Debug - Launch",
+            "cwd": "${workspaceFolder}/firmware",
+            "executable": "./build/mala.elf",
+            "svdFile": "./STM32F401.svd",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "external",
+            "gdbTarget": "172.27.0.1:2331",
+            "postLaunchCommands": [
+                "monitor halt",
+                "monitor reset"
+            ],
+            // "gdbTarget": "${env:WSL2_HOST_IP}:2331",
+        },
+        {
+            "name": "Cortex Debug - Attach",
+            "cwd": "${workspaceFolder}/firmware",
+            "executable": "./build/mala.elf",
+            "svdFile": "./STM32F401.svd",
+            "request": "attach",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "external",
+            "gdbTarget": "172.27.0.1:2331",
+        }
+    ]
+}
