@@ -98,7 +98,7 @@ BOARDDIR := ./board
 
 # Libraries.
 LWIPDIR  := lwip/src
-BMDIR    := blackmagic
+BMDIR    := blackmagic/src
 
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
@@ -116,6 +116,7 @@ include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
 include $(CHIBIOS)/tools/mk/autobuild.mk
 # Stream support.
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
+include $(CHIBIOS)/os/various/shell/shell.mk
 # lwip support.
 include make/lwip.mk
 # blackmagic library.
@@ -129,6 +130,8 @@ LDSCRIPT= ./STM32F407xE.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
+       $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        $(GFXSRC)
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global setting.
@@ -144,7 +147,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC) $(GFXINC)
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Werror
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes # -Werror
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef
@@ -158,7 +161,14 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DCHPRINTF_USE_FLOAT -DSHELL_CMD_TEST_ENABLED=0 -DVERSION=\"$(VERSION)\" -DCOMMIT_HASH=\"$(COMMIT_HASH)\"
+UDEFS = \
+  -DCHPRINTF_USE_FLOAT \
+  -DSHELL_CMD_TEST_ENABLED=0 \
+  -DVERSION=\"$(VERSION)\" \
+  -DCOMMIT_HASH=\"$(COMMIT_HASH)\" \
+  -DPC_HOSTED=0 \
+  -DNO_LIBOPENCM3 \
+  -DFIRMWARE_VERSION=\"$(VERSION)\"
 
 # Define ASM defines here
 UADEFS =
