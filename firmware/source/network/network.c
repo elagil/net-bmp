@@ -13,8 +13,8 @@
 
 #include <string.h>
 
-#include "gdb_main.h"
-#include "gdb_packet.h"
+#include "gdb/gdb_command.h"
+#include "gdb/gdb_session.h"
 #include "lwip/api.h"
 #include "lwip/netif.h"
 #include "lwip/opt.h"
@@ -26,89 +26,85 @@
  */
 #define NETWORK_EOT '\x04'
 
-#define NETWORK_STACK_SIZE       1024u
-#define NETWORK_CHAR_BUFFER_SIZE 1024u
+#define NETWORK_TCP_SERVER_STACK_SIZE 2048u
 
-static char pbuf[GDB_PACKET_BUFFER_SIZE + 1U] __attribute__((aligned(8)));
+/**
+ * @brief Serve GDB on a connection.
+ *
+ * @param p_conn A pointer to the netconn structure to serve GDB on.
+ * @param p_netbuf A pointer to the received netbuf.
+ * @returns err_t An error code.
+ */
+static err_t network_serve_gdb(struct netconn *p_conn, struct netbuf *p_netbuf) {
+    char    *p_data    = NULL;
+    uint16_t data_size = 0u;
 
-struct network_context {
-    char            receive_buffer[NETWORK_CHAR_BUFFER_SIZE];
-    size_t          received_char_count;
-    struct netconn *p_conn;
-} g_context;
+    RETURN_IF_NOT(netbuf_data(p_netbuf, (void **)&p_data, &data_size), ERR_OK);
+    ASSERT_PTR_NOT_NULL(p_data);
 
-static void network_receive(const uint32_t timeout_ms) {
-    struct netbuf *p_recv_buf;
+    size_t total_consumed_size = 0u;
+    while (total_consumed_size != data_size) {
+        ASSERT_VERBOSE(data_size >= total_consumed_size, "Data size inconsistent.");
+        size_t consumed_size = gdb_session_receive(p_data, data_size - total_consumed_size);
+        ASSERT_VERBOSE(consumed_size != 0, "No data consumed.");
 
-    netconn_set_recvtimeout(g_context.p_conn, timeout_ms);
+        total_consumed_size += consumed_size;
+        p_data = &p_data[consumed_size];
 
-    // Allocates a netbuf.
-    err_t err = netconn_recv(g_context.p_conn, &p_recv_buf);
+        while (true) {
+            char  *p_output    = NULL;
+            size_t output_size = 0u;
 
-    if (err == ERR_OK) {
-        void    *p_data      = NULL;
-        uint16_t buffer_size = 0u;
-        netbuf_data(p_recv_buf, &p_data, &buffer_size);
+            gdb_session_execute(&p_output, &output_size);
 
-        if ((g_context.received_char_count + buffer_size) <= NETWORK_CHAR_BUFFER_SIZE) {
-            memcpy(&g_context.receive_buffer[g_context.received_char_count], p_data, buffer_size);
-            g_context.received_char_count += buffer_size;
+            if ((p_output == NULL) || (output_size == 0u)) {
+                break;
+            }
+
+            // FIXME: May not have to be copied. Data is static.
+            RETURN_IF_NOT(netconn_write(p_conn, p_output, output_size, NETCONN_COPY), ERR_OK);
         }
     }
 
-    netbuf_delete(p_recv_buf);
-}
-
-void network_putchar(const char c) { netconn_write(g_context.p_conn, &c, 1, NETCONN_COPY); }
-
-char network_getchar_immediate(void) {
-    if (g_context.received_char_count == 0u) {
-        return NETWORK_EOT;
-    }
-
-    g_context.received_char_count--;
-    return g_context.receive_buffer[g_context.received_char_count];
-}
-
-char network_getchar_timeout(const uint32_t timeout_ms) {
-    while (g_context.received_char_count == 0) {
-        network_receive(timeout_ms);
-    }
-
-    return network_getchar_immediate();
+    return ERR_OK;
 }
 
 /**
- * @brief Serve a connection.
- * @details Receive data from the stream.
+ * @brief Serve the connection in an endless loop.
+ * @details Break the loop, if there is a connection error.
  *
- * @param p_conn A pointer to the connection to serve.
+ * @param p_conn A pointer to the netconn structure to serve.
  */
 static void network_serve(struct netconn *p_conn) {
-    g_context.received_char_count = 0u;
-    g_context.p_conn              = p_conn;
+    ASSERT_PTR_NOT_NULL(p_conn);
 
-    size_t size = gdb_getpacket(pbuf, GDB_PACKET_BUFFER_SIZE);
-    // If port closed and target detached, stay idle
-    // if (pbuf[0] != '\x04' || cur_target) {
-    //     SET_IDLE_STATE(false);
-    // }
-    gdb_main(pbuf, GDB_PACKET_BUFFER_SIZE, size);
+    err_t          err = ERR_OK;
+    struct netbuf *p_netbuf;
+
+    while (err == ERR_OK) {
+        err = netconn_recv(p_conn, &p_netbuf);
+
+        if (err == ERR_OK) {
+            err = network_serve_gdb(p_conn, p_netbuf);
+        }
+
+        netbuf_delete(p_netbuf);
+    }
 }
 
-THD_WORKING_AREA(wa_tcp_server, NETWORK_STACK_SIZE);
+THD_WORKING_AREA(wa_network_tcp_server, NETWORK_TCP_SERVER_STACK_SIZE);
 
 /**
  * @brief The TCP server thread.
  *
  * @param p_arg A pointer to arguments to the TCP server, unused.
  */
-THD_FUNCTION(tcp_server, p_arg) {
+THD_FUNCTION(network_tcp_server, p_arg) {
     (void)p_arg;
     struct netconn *p_tcp_conn = NULL;
     err_t           err;
 
-    chRegSetThreadName("tcp_server");
+    chRegSetThreadName("network_tcp_server");
 
     p_tcp_conn = netconn_new(NETCONN_TCP);
     LWIP_ERROR("tcp: invalid conn", (p_tcp_conn != NULL), chThdExit(MSG_RESET););
@@ -129,8 +125,21 @@ THD_FUNCTION(tcp_server, p_arg) {
             continue;
         }
 
+        palSetLine(LINE_LED_GREEN);
+
+        if (!gdb_session_lock(GDB_SESSION_TRANSPORT_TCP_IP)) {
+            // Session is already locked.
+            netconn_close(p_new_conn);
+            netconn_delete(p_new_conn);
+            continue;
+        }
+
         network_serve(p_new_conn);
+        netconn_close(p_new_conn);
         netconn_delete(p_new_conn);
+
+        gdb_session_release();
+        palClearLine(LINE_LED_GREEN);
     }
 }
 
@@ -140,7 +149,7 @@ THD_FUNCTION(tcp_server, p_arg) {
 void network_init(void) {
     lwipInit(NULL);
 
-    chThdCreateStatic(wa_tcp_server, sizeof(wa_tcp_server), NORMALPRIO + 1, tcp_server, NULL);
+    chThdCreateStatic(wa_network_tcp_server, sizeof(wa_network_tcp_server), NORMALPRIO + 1, network_tcp_server, NULL);
 }
 
 /**

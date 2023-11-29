@@ -3,9 +3,12 @@
 # NOTE: Can be overridden externally.
 #
 
+# Enable semihosting, if required.
+# SEMIHOSTING_OPT = --specs=rdimon.specs -lc -lrdimon
+
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -Og -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 $(SEMIHOSTING_OPT)
 endif
 
 # C specific options here (added to USE_OPT).
@@ -120,7 +123,7 @@ include $(CHIBIOS)/os/various/shell/shell.mk
 # lwip support.
 include make/lwip.mk
 # blackmagic library.
-include make/blackmagic.mk
+# include make/blackmagic.mk
 
 
 # Define linker script file here.
@@ -147,7 +150,7 @@ ASMXSRC = $(ALLXASMSRC)
 INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC) $(GFXINC)
 
 # Define C warning options here.
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes # -Werror
+CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Werror
 
 # Define C++ warning options here.
 CPPWARN = -Wall -Wextra -Wundef

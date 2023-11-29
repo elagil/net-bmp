@@ -11,9 +11,13 @@
             "runToEntryPoint": "main",
             "servertype": "external",
             "gdbTarget": "172.27.0.1:2331",
+            "preLaunchCommands": [
+                "monitor semihosting enable",
+                "monitor semihosting IOClient 2",
+            ],
             "postLaunchCommands": [
                 "monitor halt",
-                "monitor reset"
+                "monitor reset",
             ],
             // "gdbTarget": "${env:WSL2_HOST_IP}:2331",
         },

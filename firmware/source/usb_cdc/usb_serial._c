@@ -18,23 +18,23 @@
  *
  */
 
-#ifndef ENABLE_DEBUG
+#if ENABLE_DEBUG != 1
 #include <string.h>
 #include <sys/stat.h>
 
 typedef struct stat stat_s;
 #endif
 
-#include "gdb_if.h"
+// #include "gdb_if.h"
 #include "general.h"
-#include "platform.h"
+// #include "platform.h"
 // #include "usb_serial.h"
 #ifdef PLATFORM_HAS_TRACESWO
 #include "traceswo.h"
 #endif
 
-#include "rtt.h"
-#include "rtt_if.h"
+// #include "rtt.h"
+// #include "rtt_if.h"
 
 static bool gdb_serial_dtr = true;
 
@@ -43,7 +43,7 @@ static bool gdb_serial_dtr = true;
 // static void debug_serial_send_callback(usbd_device *dev, uint8_t ep);
 // static void debug_serial_receive_callback(usbd_device *dev, uint8_t ep);
 
-#if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+#if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 /*
  * This call initialises "SemiHosting", only we then do our own SVC interrupt things to
  * route all output through to the debug USB serial interface if debug_bmp is true.
@@ -173,7 +173,7 @@ bool gdb_serial_get_dtr(void) { return gdb_serial_dtr; }
 //     usb_serial_set_state(dev, GDB_IF_NO, CDCACM_GDB_ENDPOINT);
 //     usb_serial_set_state(dev, UART_IF_NO, CDCACM_UART_ENDPOINT);
 
-// #if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+// #if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 //     initialise_monitor_handles();
 // #endif
 // }
@@ -207,7 +207,7 @@ uint32_t debug_serial_fifo_send(const char *const fifo, const uint32_t fifo_begi
     return 0u;
 }
 
-#if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+#if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 static bool debug_serial_fifo_buffer_empty(void) {
     return debug_serial_debug_write_index == debug_serial_debug_read_index;
 }
@@ -225,17 +225,17 @@ static bool debug_serial_fifo_buffer_empty(void) {
 //     /* Forcibly empty fifo if no USB endpoint.
 //      * If fifo empty, nothing further to do. */
 //     if (usb_get_config() != 1 || (aux_serial_receive_buffer_empty()
-// #if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+// #if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 //                                   && debug_serial_fifo_buffer_empty()
 // #endif
 //                                       )) {
-// #if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+// #if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 //         debug_serial_debug_read_index = debug_serial_debug_write_index;
 // #endif
 //         aux_serial_drain_receive_buffer();
 //         debug_serial_send_complete = true;
 //     } else {
-// #if defined(ENABLE_DEBUG) && defined(PLATFORM_HAS_DEBUG)
+// #if ENABLE_DEBUG == 1 && defined(PLATFORM_HAS_DEBUG)
 //         debug_serial_debug_read_index = debug_serial_fifo_send(debug_serial_debug_buffer,
 //         debug_serial_debug_read_index,
 //                                                                debug_serial_debug_write_index);
@@ -290,7 +290,7 @@ static bool debug_serial_fifo_buffer_empty(void) {
 // #endif
 // }
 
-// #ifdef ENABLE_DEBUG &&PLATFORM_HAS_DEBUG
+// #if ENABLE_DEBUG == 1 &&PLATFORM_HAS_DEBUG
 // static void           debug_serial_append_char(const char c) {
 //     debug_serial_debug_buffer[debug_serial_debug_write_index] = c;
 //     ++debug_serial_debug_write_index;
