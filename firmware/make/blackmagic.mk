@@ -50,23 +50,26 @@ BMTARGETSRC = \
 	$(BMTARGETDIR)/target_probe.c \
 	$(BMTARGETDIR)/gdb_reg.c
 
-BMSRC = \
-	$(BMDIR)/command.c      \
-	$(BMDIR)/crc32.c        \
-	$(BMDIR)/exception.c    \
-	$(BMDIR)/gdb_hostio.c   \
-	$(BMDIR)/gdb_packet.c   \
-	$(BMDIR)/gdb_main.c     \
-	$(BMDIR)/hex_utils.c    \
-	$(BMDIR)/maths_utils.c  \
-	$(BMDIR)/morse.c        \
-	$(BMDIR)/remote.c       \
-	$(BMDIR)/timing.c       \
-	$(BMDIR)/rtt.c
+# BMSRC = \
+# 	$(BMDIR)/command.c      \
+# 	$(BMDIR)/crc32.c        \
+# 	$(BMDIR)/exception.c    \
+# 	$(BMDIR)/gdb_hostio.c   \
+# 	$(BMDIR)/gdb_packet.c   \
+# 	$(BMDIR)/gdb_main.c     \
+# 	$(BMDIR)/hex_utils.c    \
+# 	$(BMDIR)/maths_utils.c  \
+# 	$(BMDIR)/morse.c        \
+# 	$(BMDIR)/remote.c       \
+# 	$(BMDIR)/timing.c       \
+# 	$(BMDIR)/rtt.c
 
 BMINC = \
 	$(BMDIR)/include \
 	$(BMDIR)/target
+
+BMDEF = \
+	-DENABLE_DEBUG=0
 
 # Shared variables
 ALLCSRC += $(BMSRC) $(BMTARGETSRC)

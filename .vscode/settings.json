@@ -17,6 +17,7 @@
         "*.inc": "c",
         "*.h": "c",
         "*.c": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "cstdlib": "c"
     },
 }

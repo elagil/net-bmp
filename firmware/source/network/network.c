@@ -13,7 +13,6 @@
 
 #include <string.h>
 
-#include "gdb/gdb_command.h"
 #include "gdb/gdb_session.h"
 #include "lwip/api.h"
 #include "lwip/netif.h"
@@ -21,21 +20,25 @@
 #include "lwip/sys.h"
 #include "lwipthread.h"
 
-/**
- * @brief End of transmission.
- */
-#define NETWORK_EOT '\x04'
-
 #define NETWORK_TCP_SERVER_STACK_SIZE 2048u
+
+static struct network_gdb_session {
+    struct netconn *p_conn;  ///< A pointer to the netconn structure, on which the GDB client is served.
+    err_t           err;
+} g_network_gdb_session;
+
+static bool network_gdb_write_cb(char *p_data, size_t size) {
+    g_network_gdb_session.err = netconn_write(g_network_gdb_session.p_conn, p_data, size, NETCONN_COPY);
+    return (g_network_gdb_session.err == ERR_OK) ? true : false;
+}
 
 /**
  * @brief Serve GDB on a connection.
  *
- * @param p_conn A pointer to the netconn structure to serve GDB on.
  * @param p_netbuf A pointer to the received netbuf.
  * @returns err_t An error code.
  */
-static err_t network_serve_gdb(struct netconn *p_conn, struct netbuf *p_netbuf) {
+static err_t network_serve_gdb(struct netbuf *p_netbuf) {
     char    *p_data    = NULL;
     uint16_t data_size = 0u;
 
@@ -45,25 +48,14 @@ static err_t network_serve_gdb(struct netconn *p_conn, struct netbuf *p_netbuf) 
     size_t total_consumed_size = 0u;
     while (total_consumed_size != data_size) {
         ASSERT_VERBOSE(data_size >= total_consumed_size, "Data size inconsistent.");
-        size_t consumed_size = gdb_session_receive(p_data, data_size - total_consumed_size);
+
+        size_t consumed_size = gdb_session_handle(p_data, data_size - total_consumed_size);
+        RETURN_IF_NOT(g_network_gdb_session.err, ERR_OK);
+
         ASSERT_VERBOSE(consumed_size != 0, "No data consumed.");
 
         total_consumed_size += consumed_size;
         p_data = &p_data[consumed_size];
-
-        while (true) {
-            char  *p_output    = NULL;
-            size_t output_size = 0u;
-
-            gdb_session_execute(&p_output, &output_size);
-
-            if ((p_output == NULL) || (output_size == 0u)) {
-                break;
-            }
-
-            // FIXME: May not have to be copied. Data is static.
-            RETURN_IF_NOT(netconn_write(p_conn, p_output, output_size, NETCONN_COPY), ERR_OK);
-        }
     }
 
     return ERR_OK;
@@ -72,20 +64,16 @@ static err_t network_serve_gdb(struct netconn *p_conn, struct netbuf *p_netbuf) 
 /**
  * @brief Serve the connection in an endless loop.
  * @details Break the loop, if there is a connection error.
- *
- * @param p_conn A pointer to the netconn structure to serve.
  */
-static void network_serve(struct netconn *p_conn) {
-    ASSERT_PTR_NOT_NULL(p_conn);
-
+static void network_serve(void) {
     err_t          err = ERR_OK;
     struct netbuf *p_netbuf;
 
     while (err == ERR_OK) {
-        err = netconn_recv(p_conn, &p_netbuf);
+        err = netconn_recv(g_network_gdb_session.p_conn, &p_netbuf);
 
         if (err == ERR_OK) {
-            err = network_serve_gdb(p_conn, p_netbuf);
+            err = network_serve_gdb(p_netbuf);
         }
 
         netbuf_delete(p_netbuf);
@@ -118,28 +106,25 @@ THD_FUNCTION(network_tcp_server, p_arg) {
     chThdSetPriority(LOWPRIO + 2);
 
     while (true) {
-        struct netconn *p_new_conn = NULL;
+        g_network_gdb_session.p_conn = NULL;
 
-        err = netconn_accept(p_tcp_conn, &p_new_conn);
+        err = netconn_accept(p_tcp_conn, &g_network_gdb_session.p_conn);
         if (err != ERR_OK) {
             continue;
         }
 
-        palSetLine(LINE_LED_GREEN);
-
-        if (!gdb_session_lock(GDB_SESSION_TRANSPORT_TCP_IP)) {
+        if (!gdb_session_lock(GDB_SESSION_TRANSPORT_TCP_IP, network_gdb_write_cb)) {
             // Session is already locked.
-            netconn_close(p_new_conn);
-            netconn_delete(p_new_conn);
+            netconn_close(g_network_gdb_session.p_conn);
+            netconn_delete(g_network_gdb_session.p_conn);
             continue;
         }
 
-        network_serve(p_new_conn);
-        netconn_close(p_new_conn);
-        netconn_delete(p_new_conn);
+        network_serve();
+        netconn_close(g_network_gdb_session.p_conn);
+        netconn_delete(g_network_gdb_session.p_conn);
 
         gdb_session_release();
-        palClearLine(LINE_LED_GREEN);
     }
 }
 

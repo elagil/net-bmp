@@ -1,5 +1,15 @@
-#ifndef COMMON_H_
-#define COMMON_H_
+// Copyright 2023 elagil
+
+/**
+ * @file
+ * @brief   Commonly used functionality and wrappers.
+ *
+ * @addtogroup common
+ * @{
+ */
+
+#ifndef SOURCE_COMMON_COMMON_H_
+#define SOURCE_COMMON_COMMON_H_
 
 #include "ch.h"
 #include "hal.h"
@@ -33,15 +43,30 @@
 #define GET_LOWER_NIBBLE(_val) ((_val) & 0xF)
 #define GET_UPPER_NIBBLE(_val) (((_val) >> 4u) & 0xF)
 
-#define ASSERT_VERBOSE(_cond, _msg) chDbgAssert((_cond), (_msg))
-#define ASSERT_PTR_NOT_NULL(_ptr)   ASSERT_VERBOSE((_ptr) != NULL, "Null pointer.")
-#define ASSERT_NOT_REACHED()        ASSERT_VERBOSE(false, "Should not be reached.")
+#define ASSERT_VERBOSE(_cond, _msg)                                                                                    \
+    do {                                                                                                               \
+        if (!(_cond)) {                                                                                                \
+            palSetLine(LINE_LED_BLUE);                                                                                 \
+        }                                                                                                              \
+        chDbgAssert((_cond), (_msg));                                                                                  \
+    } while (false)
 
+#define ASSERT_PTR_NOT_NULL(_ptr) ASSERT_VERBOSE((_ptr) != NULL, "Null pointer.")
+#define ASSERT_NOT_REACHED()      ASSERT_VERBOSE(false, "Should not be reached.")
+
+#ifndef ARRAY_LENGTH
 #define ARRAY_LENGTH(_a) (sizeof((_a)) / sizeof((_a)[0]))
+#endif
 
 // Requires "hal.h".
 #include "chprintf.h"
+#include "chscanf.h"
 
 #define SNPRINTF chsnprintf
+#define SNSCANF  chsnscanf
 
-#endif  // COMMON_H_
+#endif  // SOURCE_COMMON_COMMON_H_
+
+/**
+ * @}
+ */

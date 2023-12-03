@@ -1,13 +1,27 @@
-#ifndef COMMON_HEX_
-#define COMMON_HEX_
+// Copyright 2023 elagil
+
+/**
+ * @file
+ * @brief   Conversion functions from string to hex, and vice-versa.
+ *
+ * @addtogroup common
+ * @{
+ */
+
+#ifndef SOURCE_COMMON_HEX_H_
+#define SOURCE_COMMON_HEX_H_
 
 #include <inttypes.h>
 #include <stddef.h>
 
-char hex_nibble_from_uint(uint8_t value);
-void hex_from_uint(const uint8_t *p_values, const size_t values_length, char *p_hex, const size_t hex_length);
+char hex_nibble_from_char(char character);
+void hex_from_str(const char *p_string, const size_t string_length, uint8_t *p_hex, const size_t hex_length);
 
-uint8_t uint_from_hex_nibble(const char hex);
-void    uint_from_hex(const char hex[], size_t hex_length, uint8_t *p_values, size_t values_length);
+char char_from_hex_nibble(const uint8_t hex);
+void str_from_hex(const uint8_t *p_hex, size_t hex_length, char *p_string, size_t string_length);
 
-#endif  // COMMON_HEX_
+#endif  // SOURCE_COMMON_HEX_H_
+
+/**
+ * @}
+ */

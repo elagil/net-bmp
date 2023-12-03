@@ -8,8 +8,8 @@
  * @{
  */
 
-#ifndef NETWORK_H_
-#define NETWORK_H_
+#ifndef SOURCE_NETWORK_NETWORK_H_
+#define SOURCE_NETWORK_NETWORK_H_
 
 #include "ch.h"
 
@@ -22,7 +22,7 @@ char network_getchar_immediate(void);
 
 void network_init(void);
 
-#endif  // NETWORK_H_
+#endif  // SOURCE_NETWORK_NETWORK_H_
 
 /**
  * @}
