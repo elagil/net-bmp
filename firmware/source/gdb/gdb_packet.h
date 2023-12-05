@@ -17,9 +17,10 @@
 
 #include "common/common.h"
 
-#define GDB_PACKET_PREIX_LENGTH      1u  // The prefix is simply the '$' symbol.
-#define GDB_PACKET_OVERHEAD_length   4u  // Start, stop, and two checksum bytes.
-#define GDB_PACKET_MAX_BUFFER_length 2048u
+#define GDB_PACKET_PREIX_LENGTH             1u  // The prefix is simply the '$' symbol.
+#define GDB_PACKET_OVERHEAD_LENGTH          4u  // Start, stop, and two checksum bytes.
+#define GDB_PACKET_MAX_BUFFER_LENGTH        2048u
+#define GDB_PACKET_MAX_USABLE_BUFFER_LENGTH (GDB_PACKET_MAX_BUFFER_LENGTH - 1u)
 
 enum gdb_packet_char {
     GDB_PACKET_CHAR_START              = '$',
@@ -60,7 +61,7 @@ enum gdb_packet_type {
  * @brief A GDB packet, received from the stub, or as prepared for transmission.
  */
 struct gdb_packet {
-    char   buffer[GDB_PACKET_MAX_BUFFER_length];
+    char   buffer[GDB_PACKET_MAX_BUFFER_LENGTH];
     size_t length;
 
     uint8_t checksum;
@@ -117,8 +118,8 @@ static inline size_t gdb_packet_get_length(struct gdb_packet* p_packet) {
 static inline size_t gdb_packet_get_payload_length(struct gdb_packet* p_packet) {
     size_t packet_length = gdb_packet_get_length(p_packet);
 
-    ASSERT_VERBOSE(packet_length >= GDB_PACKET_OVERHEAD_length, "Packet length too small.");
-    return packet_length - GDB_PACKET_OVERHEAD_length;
+    ASSERT_VERBOSE(packet_length >= GDB_PACKET_OVERHEAD_LENGTH, "Packet length too small.");
+    return packet_length - GDB_PACKET_OVERHEAD_LENGTH;
 }
 
 /**

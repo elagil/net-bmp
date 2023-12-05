@@ -44,7 +44,7 @@ void gdb_packet_init(struct gdb_packet* p_packet, enum gdb_packet_type type) {
  */
 static enum gdb_packet_result gdb_packet_add_char(struct gdb_packet* p_packet, const char character,
                                                   bool b_update_checksum) {
-    if (p_packet->length >= GDB_PACKET_MAX_BUFFER_length) {
+    if (p_packet->length >= GDB_PACKET_MAX_BUFFER_LENGTH) {
         return GDB_PACKET_RESULT_OVERFLOW;
     }
 

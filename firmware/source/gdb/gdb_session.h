@@ -16,6 +16,12 @@
 
 typedef bool (*p_gdb_write_cb_t)(char*, size_t);
 
+enum gdb_session_state {
+    GDB_SESSION_STATE_IDLE,
+    GDB_SESSION_STATE_ACTIVE,
+    GDB_SESSION_STATE_ABORTED,
+};
+
 /**
  * @brief The selected session transport.
  */
@@ -41,8 +47,11 @@ struct gdb_session {
         bool b_non_stop;
     } properties;
 
-    binary_semaphore_t lock;  ///< The session locking semaphore. FIXME: Make generic.
+    enum gdb_session_state state;
+    binary_semaphore_t     lock;  ///< The session locking semaphore. FIXME: Make generic.
 };
+
+enum gdb_session_state gdb_session_get_state(void);
 
 size_t gdb_session_handle(const char* p_input, const size_t input_size);
 void   gdb_session_write(void);

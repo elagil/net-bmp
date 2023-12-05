@@ -52,6 +52,10 @@ static err_t network_serve_gdb(struct netbuf *p_netbuf) {
         size_t consumed_size = gdb_session_handle(p_data, data_size - total_consumed_size);
         RETURN_IF_NOT(g_network_gdb_session.err, ERR_OK);
 
+        if (gdb_session_get_state() == GDB_SESSION_STATE_ABORTED) {
+            return ERR_ABRT;
+        }
+
         ASSERT_VERBOSE(consumed_size != 0, "No data consumed.");
 
         total_consumed_size += consumed_size;
