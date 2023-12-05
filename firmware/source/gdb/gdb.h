@@ -8,8 +8,8 @@
  * @{
  */
 
-#ifndef GDB_GDB_H_
-#define GDB_GDB_H_
+#ifndef SOURCE_GDB_GDB_H_
+#define SOURCE_GDB_GDB_H_
 
 #include <stdint.h>
 
@@ -77,7 +77,7 @@ static inline void gdb_reply(struct gdb_session* p_gdb_session, char* reply) {
     gdb_packet_write(&p_gdb_session->output_packet, reply);
 }
 
-#endif  // GDB_GDB_H_
+#endif  // SOURCE_GDB_GDB_H_
 
 /**
  * @}

@@ -8,8 +8,8 @@
  * @{
  */
 
-#ifndef GDB_COMMANDS_GDB_COMMAND_QUERY_H_
-#define GDB_COMMANDS_GDB_COMMAND_QUERY_H_
+#ifndef SOURCE_GDB_QUERY_GDB_QUERY_H_
+#define SOURCE_GDB_QUERY_GDB_QUERY_H_
 
 #include "gdb/gdb.h"
 #include "gdb/gdb_session.h"
@@ -21,7 +21,7 @@
 
 void gdb_query(struct gdb_session* p_gdb_session);
 
-#endif  // GDB_COMMANDS_GDB_COMMAND_QUERY_H_
+#endif  // SOURCE_GDB_QUERY_GDB_QUERY_H_
 
 /**
  * @}
