@@ -103,6 +103,10 @@ BOARDDIR := ./board
 LWIPDIR  := lwip/src
 BMDIR    := blackmagic/src
 
+# Important paths.
+SOURCEDIR := ./source/
+AUTOBUILD_ROOT := $(SOURCEDIR)
+
 # Licensing files.
 include $(CHIBIOS)/os/license/license.mk
 # Startup files.
@@ -115,16 +119,16 @@ include $(CHIBIOS)/os/hal/osal/rt-nil/osal.mk
 # RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/common/ports/ARMv7-M/compilers/GCC/mk/port.mk
-# Auto-build files in ./source recursively.
-include $(CHIBIOS)/tools/mk/autobuild.mk
 # Stream support.
 include $(CHIBIOS)/os/hal/lib/streams/streams.mk
 include $(CHIBIOS)/os/various/shell/shell.mk
+# Auto-build files in ./source recursively.
+# This does NOT add include directories recursively - only SOURCEDIR.
+include make/autobuild.mk
 # lwip support.
 include make/lwip.mk
 # blackmagic library.
-# include make/blackmagic.mk
-
+include make/blackmagic.mk
 
 # Define linker script file here.
 LDSCRIPT= ./STM32F407xE.ld
@@ -134,8 +138,7 @@ LDSCRIPT= ./STM32F407xE.ld
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
-       $(CHIBIOS)/os/various/syscalls.c \
-       $(GFXSRC)
+       $(CHIBIOS)/os/various/syscalls.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global setting.
 CPPSRC = $(ALLCPPSRC)
@@ -147,7 +150,7 @@ ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
 # Inclusion directories.
-INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC) $(GFXINC)
+INCDIR = $(CONFDIR) $(ALLINC) $(TESTINC) $(SOURCEDIR)/compat
 
 # Define C warning options here.
 CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes -Werror

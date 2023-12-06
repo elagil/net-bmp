@@ -18,7 +18,7 @@
 #include "common/common.h"
 #include "gdb.h"
 #include "gdb_packet.h"
-#include "network.h"
+#include "network/network.h"
 
 /**
  * @brief The GDB session. There can only be one connection at a time.
@@ -114,7 +114,6 @@ bool gdb_session_lock(enum gdb_session_transport transport, p_gdb_write_cb_t p_w
  * @brief Release the GDB session.
  */
 void gdb_session_release(void) {
-    g_gdb_session.properties.b_target_is_running  = false;
     g_gdb_session.properties.b_is_extended_remote = false;
     g_gdb_session.properties.b_non_stop           = false;
     g_gdb_session.transport                       = GDB_SESSION_TRANSPORT_NONE;

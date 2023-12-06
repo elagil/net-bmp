@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "ch.h"
-#include "gdb_session.h"
+#include "gdb/gdb_session.h"
 #include "hal.h"
 #include "network/network.h"
 #include "usb_cdc/shell_interface.h"

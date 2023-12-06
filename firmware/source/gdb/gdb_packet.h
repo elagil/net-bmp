@@ -16,6 +16,7 @@
 #include <stddef.h>
 
 #include "common/common.h"
+#include "compat/platform.h"
 
 #define GDB_PACKET_PREIX_LENGTH             1u  // The prefix is simply the '$' symbol.
 #define GDB_PACKET_OVERHEAD_LENGTH          4u  // Start, stop, and two checksum bytes.

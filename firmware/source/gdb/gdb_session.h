@@ -13,6 +13,9 @@
 
 #include "ch.h"
 #include "gdb_packet.h"
+#include "general.h"
+#include "target.h"
+#include "target_internal.h"
 
 typedef bool (*p_gdb_write_cb_t)(char*, size_t);
 
@@ -35,6 +38,8 @@ enum gdb_session_transport {
  * @brief The GDB session structure.
  */
 struct gdb_session {
+    target_s target;
+
     struct gdb_packet input_packet;
     struct gdb_packet output_packet;
 
@@ -42,7 +47,6 @@ struct gdb_session {
     enum gdb_session_transport transport;  ///< The type of transport to use for the session.
 
     struct {
-        bool b_target_is_running;
         bool b_is_extended_remote;
         bool b_non_stop;
     } properties;

@@ -69,7 +69,10 @@ static void gdb_extended_remote(struct gdb_session* p_gdb_session) {
  * @param p_gdb_session A pointer to the GDB session structure.
  */
 static void gdb_stop_reason_query(struct gdb_session* p_gdb_session) {
-    if (p_gdb_session->properties.b_non_stop && p_gdb_session->properties.b_target_is_running) {
+    // FIXME: Extract from target field.
+    bool b_target_is_running = false;
+
+    if (p_gdb_session->properties.b_non_stop && b_target_is_running) {
         gdb_reply(p_gdb_session, GDB_REPLY_OK);
         gdb_session_write();
         return;

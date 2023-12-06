@@ -17,6 +17,9 @@
 #include "gdb_packet.h"
 #include "gdb_session.h"
 
+/**
+ * @brief The maximum number of commands that the GDB server accepts on queries.
+ */
 #define GDB_MAX_ARG_COUNT 32u
 
 #define GDB_REPLY_EMPTY          ""    // An empty response, usually for unsupported requests.
@@ -28,9 +31,12 @@
 #define GDB_REPLY_ERROR_02 "E02"  // Error reply with index 2
 #define GDB_REPLY_ERROR_03 "E03"  // Error reply with index 3
 
+/**
+ * @brief GDB result codes for handling commands.
+ */
 enum gdb_result {
-    GDB_RESULT_OK,
-    GDB_RESULT_EXCESS_ARGUMENTS,
+    GDB_RESULT_OK,                ///< The command was handled correctly.
+    GDB_RESULT_EXCESS_ARGUMENTS,  ///< The command had too many arguments.
 };
 
 /**
