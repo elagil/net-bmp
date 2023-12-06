@@ -74,13 +74,14 @@ void gdb_execute_sub(const char* p_command_string, struct gdb_session* p_gdb_ses
                      const size_t argc, const char* p_argv);
 
 /**
- * @brief Write a GDB reply packet to the session.
+ * @brief Write a GDB reply packet to the session, and flush it to the transport.
  *
  * @param p_gdb_session A pointer to the GDB session structure.
  * @param reply The reply to send.
  */
 static inline void gdb_reply(struct gdb_session* p_gdb_session, char* reply) {
     gdb_packet_write(&p_gdb_session->output_packet, reply);
+    gdb_session_flush(p_gdb_session);
 }
 
 #endif  // SOURCE_GDB_GDB_H_

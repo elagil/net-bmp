@@ -27,19 +27,22 @@ struct gdb_session g_gdb_session;
 
 enum gdb_session_state gdb_session_get_state(void) { return g_gdb_session.state; }
 
-void gdb_session_write(void) {
-    bool b_success = g_gdb_session.p_write_cb(gdb_packet_get_buffer(&g_gdb_session.output_packet),
-                                              gdb_packet_get_length(&g_gdb_session.output_packet));
+void gdb_session_flush(struct gdb_session* p_gdb_session) {
+    ASSERT_PTR_NOT_NULL(p_gdb_session);
+    ASSERT_PTR_NOT_NULL(p_gdb_session->p_write_cb);
 
-    gdb_packet_mark_sent(&g_gdb_session.output_packet);
+    bool b_success = p_gdb_session->p_write_cb(gdb_packet_get_buffer(&p_gdb_session->output_packet),
+                                               gdb_packet_get_length(&p_gdb_session->output_packet));
+
+    gdb_packet_mark_sent(&p_gdb_session->output_packet);
 
     if (b_success) {
         return;
     }
 
-    switch (g_gdb_session.transport) {
+    switch (p_gdb_session->transport) {
         case GDB_SESSION_TRANSPORT_TCP_IP:
-            g_gdb_session.state = GDB_SESSION_STATE_ABORTED;
+            p_gdb_session->state = GDB_SESSION_STATE_ABORTED;
             break;
 
         default:
@@ -69,14 +72,18 @@ size_t gdb_session_handle(const char* p_input, const size_t input_length) {
 
     switch (result) {
         case GDB_PACKET_RESULT_OK:
-            gdb_packet_write_ack(&g_gdb_session.output_packet, GDB_PACKET_CHAR_ACK);
-            gdb_session_write();
+            if (!g_gdb_session.properties.b_no_ack_mode) {
+                gdb_packet_write_ack(&g_gdb_session.output_packet, GDB_PACKET_CHAR_ACK);
+                gdb_session_flush(&g_gdb_session);
+            }
             gdb_execute(&g_gdb_session);
             break;
 
         case GDB_PACKET_RESULT_CHECKSUM_ERROR:
-            gdb_packet_write_ack(&g_gdb_session.output_packet, GDB_PACKET_CHAR_NACK);
-            gdb_session_write();
+            if (!g_gdb_session.properties.b_no_ack_mode) {
+                gdb_packet_write_ack(&g_gdb_session.output_packet, GDB_PACKET_CHAR_NACK);
+                gdb_session_flush(&g_gdb_session);
+            }
             break;
 
         default:
@@ -116,6 +123,7 @@ bool gdb_session_lock(enum gdb_session_transport transport, p_gdb_write_cb_t p_w
 void gdb_session_release(void) {
     g_gdb_session.properties.b_is_extended_remote = false;
     g_gdb_session.properties.b_non_stop           = false;
+    g_gdb_session.properties.b_no_ack_mode        = false;
     g_gdb_session.transport                       = GDB_SESSION_TRANSPORT_NONE;
     g_gdb_session.state                           = GDB_SESSION_STATE_IDLE;
 

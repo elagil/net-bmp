@@ -51,7 +51,7 @@ void gdb_query_remote_help(struct gdb_session* p_gdb_session, const size_t argc,
 
     gdb_packet_write_stop(p_output_packet);
 
-    gdb_session_write();
+    gdb_session_flush(p_gdb_session);
 }
 
 /**
@@ -75,7 +75,7 @@ static void gdb_query_remote_version(struct gdb_session* p_gdb_session, const si
     gdb_packet_write_payload_as_hex(p_output_packet, "\n");
     gdb_packet_write_stop(p_output_packet);
 
-    gdb_session_write();
+    gdb_session_flush(p_gdb_session);
 }
 
 /**

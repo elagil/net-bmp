@@ -38,7 +38,7 @@ enum gdb_session_transport {
  * @brief The GDB session structure.
  */
 struct gdb_session {
-    target_s target;
+    target_s* p_target;
 
     struct gdb_packet input_packet;
     struct gdb_packet output_packet;
@@ -49,6 +49,7 @@ struct gdb_session {
     struct {
         bool b_is_extended_remote;
         bool b_non_stop;
+        bool b_no_ack_mode;
     } properties;
 
     enum gdb_session_state state;
@@ -58,7 +59,7 @@ struct gdb_session {
 enum gdb_session_state gdb_session_get_state(void);
 
 size_t gdb_session_handle(const char* p_input, const size_t input_size);
-void   gdb_session_write(void);
+void   gdb_session_flush(struct gdb_session* p_gdb_session);
 
 bool gdb_session_lock(enum gdb_session_transport transport, p_gdb_write_cb_t p_write_cb);
 void gdb_session_release(void);

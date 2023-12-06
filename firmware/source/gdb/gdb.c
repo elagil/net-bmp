@@ -59,7 +59,6 @@ static void gdb_extended_remote(struct gdb_session* p_gdb_session) {
     p_gdb_session->properties.b_is_extended_remote = true;
 
     gdb_reply(p_gdb_session, GDB_REPLY_OK);
-    gdb_session_write();
 }
 
 /**
@@ -74,28 +73,17 @@ static void gdb_stop_reason_query(struct gdb_session* p_gdb_session) {
 
     if (p_gdb_session->properties.b_non_stop && b_target_is_running) {
         gdb_reply(p_gdb_session, GDB_REPLY_OK);
-        gdb_session_write();
         return;
     }
 
-    gdb_packet_write(&p_gdb_session->output_packet, "W00");
-    gdb_session_write();
+    gdb_reply(p_gdb_session, "W00");
 }
 
-static void gdb_resume_addr(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_resume_addr(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_resume_signal(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_resume_signal(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_detach(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_detach(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
 /**
  * @brief
@@ -103,21 +91,14 @@ static void gdb_detach(struct gdb_session* p_gdb_session) {
  *
  * @param p_gdb_session A pointer to the GDB session structure.
  */
-static void gdb_get_registers(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_OK);
-    gdb_session_write();
-}
+static void gdb_get_registers(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_OK); }
 
-static void gdb_set_registers(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_set_registers(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
 static void gdb_set_thread(struct gdb_session* p_gdb_session) {
     // FIXME: Extract thread number, if applicable.
 
     gdb_reply(p_gdb_session, GDB_REPLY_OK);
-    gdb_session_write();
 }
 
 /**
@@ -126,65 +107,29 @@ static void gdb_set_thread(struct gdb_session* p_gdb_session) {
  *
  * @param p_gdb_session A pointer to the GDB session structure.
  */
-static void gdb_kill(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_OK);
-    gdb_session_write();
-}
+static void gdb_kill(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_OK); }
 
-static void gdb_get_memory(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_get_memory(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_write_memory_hex(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_write_memory_hex(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_read_register(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_read_register(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_write_register(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_write_register(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_set(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_set(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_restart(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_restart(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_step(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_step(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_step_signal(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_step_signal(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_is_thread_alive(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_is_thread_alive(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_v(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_v(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
-static void gdb_write_memory(struct gdb_session* p_gdb_session) {
-    gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-    gdb_session_write();
-}
+static void gdb_write_memory(struct gdb_session* p_gdb_session) { gdb_reply(p_gdb_session, GDB_REPLY_EMPTY); }
 
 /**
  * @brief Insert or remove a target breakpoint.
@@ -268,7 +213,7 @@ void gdb_execute(struct gdb_session* p_gdb_session) {
 
     if (p_gdb_command == NULL) {
         gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-        gdb_session_write();
+
         return;
     }
 
@@ -310,12 +255,16 @@ void gdb_execute_sub(const char* p_command_string, struct gdb_session* p_gdb_ses
     if (p_matched_gdb_subcommand == NULL) {
         // An empty reply indicates that the subcommand is not recognized.
         gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
-        gdb_session_write();
         return;
     }
 
     ASSERT_PTR_NOT_NULL(p_matched_gdb_subcommand);
-    ASSERT_PTR_NOT_NULL(p_matched_gdb_subcommand->p_callback);
+    if (p_matched_gdb_subcommand->p_callback == NULL) {
+        // The command is not yet implemented.
+        gdb_reply(p_gdb_session, GDB_REPLY_EMPTY);
+        return;
+    }
+
     p_matched_gdb_subcommand->p_callback(p_gdb_session, argc, p_argv);
 }
 
