@@ -23,7 +23,7 @@ repos:
       - --root=firmware
 
 - repo: https://github.com/crate-ci/typos
-  rev: v1.27.0
+  rev: typos-dict-v0.11.35
   hooks:
   - id: typos
     args:
